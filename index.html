@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Farshid PK – SOC Analyst</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0A0F1E;
+      --bg2:       #0F1629;
+      --bg3:       #151E35;
+      --cyan:      #00D4FF;
+      --cyan-dim:  #00A3C4;
+      --red:       #FF3B5C;
+      --text:      #E8EDF5;
+      --muted:     #8892A4;
+      --border:    #1E2D4A;
+      --font-mono: 'Space Mono', monospace;
+      --font-head: 'Space Grotesk', sans-serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--cyan-dim); border-radius: 2px; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 3rem;
+      background: rgba(10, 15, 30, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--cyan);
+      letter-spacing: 0.05em;
+    }
+    .nav-logo span { color: var(--muted); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--cyan); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 0 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-grid {
+      position: absolute; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 0%, transparent 100%);
+    }
+    .hero-glow {
+      position: absolute; top: 20%; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 300px;
+      background: radial-gradient(ellipse, rgba(0,212,255,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-content { position: relative; z-index: 1; max-width: 860px; }
+
+    .hero-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--cyan);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: block; width: 32px; height: 1px;
+      background: var(--cyan);
+    }
+
+    .hero-name {
+      font-family: var(--font-head);
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-terminal {
+      font-family: var(--font-mono);
+      font-size: clamp(1rem, 2.5vw, 1.4rem);
+      color: var(--cyan);
+      margin-bottom: 2rem;
+      min-height: 2em;
+    }
+    .cursor {
+      display: inline-block;
+      width: 2px; height: 1.1em;
+      background: var(--cyan);
+      vertical-align: middle;
+      margin-left: 2px;
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    .hero-summary {
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 580px;
+      line-height: 1.75;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-cta {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.75rem 1.75rem;
+      background: var(--cyan);
+      color: var(--bg);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      border: none; cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { background: #33DDFF; transform: translateY(-1px); }
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.75rem 1.75rem;
+      background: transparent;
+      color: var(--cyan);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      border: 1px solid var(--cyan);
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-ghost:hover { background: rgba(0,212,255,0.08); transform: translateY(-1px); }
+
+    /* ── STATS STRIP ── */
+    .stats-strip {
+      display: flex; gap: 0; flex-wrap: wrap;
+      margin-top: 4rem;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--cyan);
+    }
+    .stat {
+      flex: 1 1 160px;
+      padding: 1.25rem 1.5rem;
+      border-right: 1px solid var(--border);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-number {
+      font-family: var(--font-head);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--cyan);
+      line-height: 1;
+    }
+    .stat-label {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 0.3rem;
+    }
+
+    /* ── SECTIONS ── */
+    section { padding: 6rem 3rem; max-width: 1100px; margin: 0 auto; }
+
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--cyan);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+    .section-title {
+      font-family: var(--font-head);
+      font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 3rem;
+      letter-spacing: -0.015em;
+    }
+    .section-divider {
+      width: 100%; height: 1px;
+      background: var(--border);
+      margin-bottom: 4rem;
+    }
+
+    /* ── EXPERIENCE ── */
+    .exp-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--cyan);
+      padding: 2rem 2.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .exp-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      flex-wrap: wrap; gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .exp-role {
+      font-family: var(--font-head);
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .exp-company {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--cyan);
+      margin-top: 0.2rem;
+    }
+    .exp-date {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      background: var(--bg3);
+      padding: 0.3rem 0.75rem;
+      border: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .exp-bullets { list-style: none; }
+    .exp-bullets li {
+      font-size: 0.92rem;
+      color: var(--muted);
+      padding: 0.45rem 0;
+      padding-left: 1.25rem;
+      border-bottom: 1px solid rgba(30,45,74,0.5);
+      position: relative;
+      line-height: 1.65;
+    }
+    .exp-bullets li:last-child { border-bottom: none; }
+    .exp-bullets li::before {
+      content: '›';
+      position: absolute; left: 0;
+      color: var(--cyan);
+      font-size: 1rem;
+    }
+    .highlight { color: var(--text); font-weight: 500; }
+
+    /* ── SKILLS ── */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+    .skill-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+      transition: border-color 0.2s;
+    }
+    .skill-card:hover { border-color: var(--cyan-dim); }
+    .skill-cat {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--cyan);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .skill-cat::after {
+      content: ''; flex: 1; height: 1px;
+      background: var(--border);
+    }
+    .skill-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .tag {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      padding: 0.25rem 0.6rem;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .tag:hover { color: var(--cyan); border-color: var(--cyan-dim); }
+
+    /* ── METRICS ── */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .metric-cell {
+      background: var(--bg2);
+      padding: 2rem 1.75rem;
+      text-align: center;
+    }
+    .metric-val {
+      font-family: var(--font-head);
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--cyan);
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+    .metric-label {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* ── EDUCATION ── */
+    .edu-cards { display: flex; flex-direction: column; gap: 1rem; }
+    .edu-card {
+      display: flex; align-items: center; gap: 2rem;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      flex-wrap: wrap;
+    }
+    .edu-icon {
+      font-size: 1.5rem;
+      opacity: 0.7;
+      flex-shrink: 0;
+    }
+    .edu-info { flex: 1; }
+    .edu-degree {
+      font-family: var(--font-head);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .edu-school {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--cyan);
+      margin-top: 0.2rem;
+    }
+    .edu-year {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      background: var(--bg3);
+      padding: 0.3rem 0.75rem;
+      border: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    /* ── CONTACT ── */
+    #contact { text-align: center; }
+    .contact-box {
+      max-width: 600px;
+      margin: 0 auto;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--cyan);
+      padding: 3rem 2rem;
+    }
+    .contact-tagline {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 2rem;
+      line-height: 1.7;
+    }
+    .contact-links {
+      display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center;
+    }
+    .contact-link {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--cyan);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      padding: 0.6rem 1.25rem;
+      background: var(--bg3);
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .contact-link:hover { border-color: var(--cyan); background: rgba(0,212,255,0.06); }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid var(--border);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+    footer span { color: var(--cyan); }
+
+    /* ── PULSE DOT ── */
+    .pulse-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--red);
+      margin-right: 6px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(255,59,92,0.5); }
+      50%      { box-shadow: 0 0 0 6px rgba(255,59,92,0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { gap: 1.2rem; }
+      .nav-links a { font-size: 0.68rem; }
+      #hero, section { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .stats-strip { flex-direction: column; }
+      .stat { border-right: none; border-bottom: 1px solid var(--border); }
+      .exp-card { padding: 1.5rem; }
+      .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+      .cursor { animation: none; }
+      .pulse-dot { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">farshid<span>.pk</span></div>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-grid"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <span class="pulse-dot"></span>Available for new opportunities
+      </div>
+      <h1 class="hero-name">Farshid PK</h1>
+      <div class="hero-terminal" id="terminal-text"><span class="cursor"></span></div>
+      <p class="hero-summary">
+        SOC Analyst with 2 years defending enterprise infrastructure in 24/7 Security Operations Centers.
+        Specialized in threat detection, SIEM correlation, and incident response across large-scale environments.
+      </p>
+      <div class="hero-cta">
+        <a href="#experience" class="btn-primary">View Experience →</a>
+        <a href="mailto:pkfarshid7@gmail.com" class="btn-ghost">Get in Touch</a>
+      </div>
+      <div class="stats-strip">
+        <div class="stat">
+          <div class="stat-number">500+</div>
+          <div class="stat-label">Alerts Triaged Daily</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">30%</div>
+          <div class="stat-label">False Positive Reduction</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">100%</div>
+          <div class="stat-label">Critical SLA Compliance</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">15+</div>
+          <div class="stat-label">Incidents Handled / Month</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <div class="reveal">
+      <div class="section-label">// 01 — Work History</div>
+      <h2 class="section-title">Experience</h2>
+    </div>
+    <div class="exp-card reveal">
+      <div class="exp-header">
+        <div>
+          <div class="exp-role">SOC Analyst — Level 1</div>
+          <div class="exp-company">Spinny.com</div>
+        </div>
+        <div class="exp-date">2023 — 2025</div>
+      </div>
+      <ul class="exp-bullets">
+        <li>Monitored <span class="highlight">500+ security alerts daily</span> across IBM QRadar, Microsoft Sentinel, SentinelOne, and Microsoft Defender — zero missed critical incidents during shift coverage.</li>
+        <li>Reduced <span class="highlight">false positive rate by 30%</span> through systematic alert tuning and accurate triage, sharpening the team's investigative focus.</li>
+        <li>Performed in-depth log analysis and IOC investigation via VirusTotal, AbuseIPDB, and MISP — cutting mean time to qualify (TTQ) by <span class="highlight">20%</span>.</li>
+        <li>Investigated and contained <span class="highlight">15+ phishing campaigns and malware incidents per month</span> by correlating endpoint telemetry, email headers, and network logs.</li>
+        <li>Maintained <span class="highlight">100% SLA compliance</span> across all critical and high-severity events (P1–P4) by strictly following SOC runbooks and SOPs.</li>
+        <li>Created detailed incident tickets with accurate timelines, attack narratives, and remediation notes — improving handover quality and reducing re-investigation time.</li>
+        <li>Escalated confirmed incidents to L2 with well-documented evidence, contributing to faster mean time to respond (MTTR).</li>
+        <li>Conducted threat intelligence enrichment on all actionable IOCs using open-source and commercial feeds to support proactive threat hunting.</li>
+        <li>Maintained seamless shift handovers in a <span class="highlight">24×7 rotating schedule</span> with up-to-date case notes and real-time comms.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- METRICS -->
+  <section id="about" style="padding-top: 0;">
+    <div class="reveal">
+      <div class="section-label">// 02 — Impact by the Numbers</div>
+      <h2 class="section-title">Key Metrics</h2>
+    </div>
+    <div class="metrics-grid reveal">
+      <div class="metric-cell">
+        <div class="metric-val">−30%</div>
+        <div class="metric-label">False Positive Rate</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-val">−20%</div>
+        <div class="metric-label">Mean Time to Qualify</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-val">100%</div>
+        <div class="metric-label">SLA Compliance</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-val">500+</div>
+        <div class="metric-label">Daily Alerts Monitored</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-val">15+</div>
+        <div class="metric-label">Incidents / Month</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-val">24×7</div>
+        <div class="metric-label">SOC Coverage</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="reveal">
+      <div class="section-label">// 03 — Technical Arsenal</div>
+      <h2 class="section-title">Skills</h2>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-card reveal">
+        <div class="skill-cat">SIEM Platforms</div>
+        <div class="skill-tags">
+          <span class="tag">IBM QRadar</span>
+          <span class="tag">Microsoft Sentinel</span>
+          <span class="tag">Correlation Rules</span>
+          <span class="tag">Dashboard Review</span>
+        </div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-cat">EDR Tools</div>
+        <div class="skill-tags">
+          <span class="tag">Microsoft Defender</span>
+          <span class="tag">SentinelOne</span>
+          <span class="tag">Trend Micro</span>
+          <span class="tag">Endpoint Containment</span>
+        </div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-cat">Threat Intelligence</div>
+        <div class="skill-tags">
+          <span class="tag">VirusTotal</span>
+          <span class="tag">AbuseIPDB</span>
+          <span class="tag">MISP</span>
+          <span class="tag">URLScan.io</span>
+          <span class="tag">OTX AlienVault</span>
+        </div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-cat">Log Analysis</div>
+        <div class="skill-tags">
+          <span class="tag">Windows Event Logs</span>
+          <span class="tag">Syslog</span>
+          <span class="tag">Firewall Logs</span>
+          <span class="tag">Proxy Logs</span>
+          <span class="tag">Email Headers</span>
+        </div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-cat">Network Security</div>
+        <div class="skill-tags">
+          <span class="tag">TCP/IP</span>
+          <span class="tag">DNS</span>
+          <span class="tag">HTTP/HTTPS</span>
+          <span class="tag">IDS/IPS</span>
+          <span class="tag">Firewall Rules</span>
+          <span class="tag">Packet Analysis</span>
+        </div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-cat">Cybersecurity Concepts</div>
+        <div class="skill-tags">
+          <span class="tag">MITRE ATT&amp;CK</span>
+          <span class="tag">Malware Analysis</span>
+          <span class="tag">Phishing Detection</span>
+          <span class="tag">Lateral Movement</span>
+          <span class="tag">DDoS</span>
+          <span class="tag">Brute-Force</span>
+        </div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-cat">Operating Systems</div>
+        <div class="skill-tags">
+          <span class="tag">Windows (AD)</span>
+          <span class="tag">Linux</span>
+          <span class="tag">Log Navigation</span>
+          <span class="tag">Process Monitoring</span>
+        </div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-cat">SOC Operations</div>
+        <div class="skill-tags">
+          <span class="tag">Runbook Execution</span>
+          <span class="tag">ITSM Ticketing</span>
+          <span class="tag">24×7 Shift Ops</span>
+          <span class="tag">KPI Adherence</span>
+          <span class="tag">Incident Escalation</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section id="education" style="padding-top: 0;">
+    <div class="reveal">
+      <div class="section-label">// 04 — Education</div>
+      <h2 class="section-title">Academic Background</h2>
+    </div>
+    <div class="edu-cards">
+      <div class="edu-card reveal">
+        <div class="edu-icon">🎓</div>
+        <div class="edu-info">
+          <div class="edu-degree">Bachelor of Computer Science</div>
+          <div class="edu-school">Nilgiri College of Arts and Sciences</div>
+        </div>
+        <div class="edu-year">2020 — 2023</div>
+      </div>
+      <div class="edu-card reveal">
+        <div class="edu-icon">📘</div>
+        <div class="edu-info">
+          <div class="edu-degree">Higher Secondary — Bioscience</div>
+          <div class="edu-school">CMS Higher Secondary School</div>
+        </div>
+        <div class="edu-year">2018 — 2020</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="contact-box reveal">
+      <div class="section-label" style="text-align:center; margin-bottom: 0.75rem;">// 05 — Say Hello</div>
+      <h2 class="section-title" style="margin-bottom: 1rem;">Let's Connect</h2>
+      <p class="contact-tagline">
+        Open to SOC Analyst, Threat Intelligence, or Incident Response roles.<br/>
+        Based in Kochi, Kerala — available for remote or on-site opportunities.
+      </p>
+      <div class="contact-links">
+        <a href="mailto:pkfarshid7@gmail.com" class="contact-link">✉ pkfarshid7@gmail.com</a>
+        <a href="tel:+917025158454" class="contact-link">📞 +91 70251 58454</a>
+        <a href="https://linkedin.com/in/farshid-pk" target="_blank" class="contact-link">in LinkedIn</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span>Farshid PK</span> — SOC Analyst · Kochi, Kerala ·
+    Built with intent, not templates.
+  </footer>
+
+  <script>
+    // Terminal typewriter
+    const phrases = [
+      'SOC Analyst — Level 1',
+      'Threat Detection & Response',
+      'SIEM · EDR · Threat Intelligence',
+      '500+ Alerts Monitored Daily',
+    ];
+    let phraseIndex = 0, charIndex = 0, deleting = false;
+    const terminalEl = document.getElementById('terminal-text');
+
+    function type() {
+      const current = phrases[phraseIndex];
+      const cursor = '<span class="cursor"></span>';
+      if (!deleting) {
+        charIndex++;
+        terminalEl.innerHTML = current.slice(0, charIndex) + cursor;
+        if (charIndex === current.length) {
+          deleting = true;
+          setTimeout(type, 2000);
+          return;
+        }
+      } else {
+        charIndex--;
+        terminalEl.innerHTML = current.slice(0, charIndex) + cursor;
+        if (charIndex === 0) {
+          deleting = false;
+          phraseIndex = (phraseIndex + 1) % phrases.length;
+        }
+      }
+      setTimeout(type, deleting ? 40 : 75);
+    }
+    type();
+
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 80);
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => io.observe(el));
+  </script>
+</body>
+</html>
